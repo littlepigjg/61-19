@@ -34,6 +34,35 @@ body {
 nav {
   display: flex;
   gap: 10px;
+  align-items: center;
+}
+
+.lang-switcher {
+  display: flex;
+  margin-left: 10px;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.lang-switcher__btn {
+  padding: 6px 14px;
+  font-size: 12px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.lang-switcher__btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.lang-switcher__btn.active {
+  color: #fff;
+  background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
 }
 
 .nav-link {
@@ -443,6 +472,15 @@ nav {
   .header {
     flex-direction: column;
     gap: 15px;
+  }
+
+  nav {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .lang-switcher {
+    margin-left: 0;
   }
 
   .player-controls {

@@ -22,10 +22,27 @@ class RadioPlayer {
   }
 
   async init() {
+    I18N.init();
+    this.bindLangSwitcher();
     await this.loadSystemConfig();
     this.notifyLeave();
     await this.loadChannels();
     this.bindEvents();
+
+    I18N.onChange(() => {
+      this.loadChannels();
+      if (!this.currentChannel) {
+        this.currentChannelName.textContent = I18N.t('channel.selectPrompt');
+      }
+    });
+  }
+
+  bindLangSwitcher() {
+    document.querySelectorAll('.lang-switcher__btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        I18N.setLang(btn.dataset.lang);
+      });
+    });
   }
 
   async loadSystemConfig() {
@@ -45,7 +62,7 @@ class RadioPlayer {
       this.renderChannels(channels);
     } catch (err) {
       console.error('Failed to load channels:', err);
-      this.channelList.innerHTML = '<p style="color:#888">无法加载频道列表</p>';
+      this.channelList.innerHTML = `<p style="color:#888">${I18N.t('channel.loadError')}</p>`;
     }
   }
 
@@ -55,8 +72,8 @@ class RadioPlayer {
         <h3><span class="channel-status ${ch.isPlaying ? 'playing' : ''}"></span>${ch.name}</h3>
         <p>${ch.description}</p>
         <div class="channel-meta">
-          <span>👥 ${ch.listeners} 人在线</span>
-          <span>${ch.isPlaying ? '播放中' : '已停止'}</span>
+          <span>👥 ${I18N.t('channel.listenersOnline', { count: I18N.formatNumber(ch.listeners) })}</span>
+          <span>${ch.isPlaying ? I18N.t('channel.playing') : I18N.t('channel.stopped')}</span>
         </div>
       </div>
     `).join('');
@@ -145,12 +162,13 @@ class RadioPlayer {
 
   updateStatus(data) {
     this.currentChannelName.textContent = data.name;
+    this.currentChannelName.removeAttribute('data-i18n');
     if (data.currentTrack) {
       this.currentTrack.textContent = data.currentTrack.title;
     } else {
       this.currentTrack.textContent = '--';
     }
-    this.listenerCount.textContent = data.listeners;
+    this.listenerCount.textContent = I18N.formatNumber(data.listeners);
     this.updatePlayingState(data.isPlaying);
     this.playBtn.disabled = !data.currentTrack;
   }
@@ -172,7 +190,7 @@ class RadioPlayer {
   }
 
   updateListeners(count) {
-    this.listenerCount.textContent = count;
+    this.listenerCount.textContent = I18N.formatNumber(count);
   }
 
   updatePlayerUI(channelId) {

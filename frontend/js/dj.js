@@ -22,8 +22,27 @@ class DJPanel {
   }
 
   async init() {
+    I18N.init();
+    this.bindLangSwitcher();
     await this.loadChannels();
     this.bindEvents();
+
+    I18N.onChange(() => {
+      this.loadChannels();
+      if (!this.currentChannel) {
+        this.djChannelName.textContent = I18N.t('channel.select');
+      }
+      this.updateStatusBadge();
+      this.renderPlaylist();
+    });
+  }
+
+  bindLangSwitcher() {
+    document.querySelectorAll('.lang-switcher__btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        I18N.setLang(btn.dataset.lang);
+      });
+    });
   }
 
   async loadChannels() {
@@ -42,8 +61,8 @@ class DJPanel {
         <h3><span class="channel-status ${ch.isPlaying ? 'playing' : ''}"></span>${ch.name}</h3>
         <p>${ch.description}</p>
         <div class="channel-meta">
-          <span>👥 ${ch.listeners} 人在线</span>
-          <span>${ch.isPlaying ? '播放中' : '已停止'}</span>
+          <span>👥 ${I18N.t('channel.listenersOnline', { count: I18N.formatNumber(ch.listeners) })}</span>
+          <span>${ch.isPlaying ? I18N.t('channel.playing') : I18N.t('channel.stopped')}</span>
         </div>
       </div>
     `).join('');
@@ -114,6 +133,7 @@ class DJPanel {
 
   handleStatus(data) {
     this.djChannelName.textContent = data.name;
+    this.djChannelName.removeAttribute('data-i18n');
     this.isPlaying = data.isPlaying;
     this.currentIndex = data.currentIndex || -1;
 
@@ -123,11 +143,11 @@ class DJPanel {
       this.nowPlaying.textContent = '--';
     }
 
-    this.djListenerCount.textContent = data.listeners;
+    this.djListenerCount.textContent = I18N.formatNumber(data.listeners);
 
     if (data.playlist) {
       this.playlist = data.playlist;
-      this.playlistCount.textContent = data.playlist.length;
+      this.playlistCount.textContent = I18N.formatNumber(data.playlist.length);
       this.renderPlaylist();
     }
 
@@ -157,7 +177,7 @@ class DJPanel {
   }
 
   handleListenersChange(data) {
-    this.djListenerCount.textContent = data.listeners;
+    this.djListenerCount.textContent = I18N.formatNumber(data.listeners);
     this.loadChannels();
   }
 
@@ -176,13 +196,13 @@ class DJPanel {
   updateStatusBadge() {
     this.statusBadge.classList.remove('playing', 'paused', 'stopped');
     if (this.isPlaying) {
-      this.statusBadge.textContent = '播放中';
+      this.statusBadge.textContent = I18N.t('channel.playing');
       this.statusBadge.classList.add('playing');
     } else if (this.currentIndex >= 0) {
-      this.statusBadge.textContent = '已暂停';
+      this.statusBadge.textContent = I18N.t('channel.paused');
       this.statusBadge.classList.add('paused');
     } else {
-      this.statusBadge.textContent = '已停止';
+      this.statusBadge.textContent = I18N.t('channel.stopped');
       this.statusBadge.classList.add('stopped');
     }
   }
@@ -192,7 +212,7 @@ class DJPanel {
       const response = await fetch(`${CONFIG.API_BASE}/api/channels/${channelId}/playlist`);
       const playlist = await response.json();
       this.playlist = playlist;
-      this.playlistCount.textContent = playlist.length;
+      this.playlistCount.textContent = I18N.formatNumber(playlist.length);
       this.renderPlaylist();
     } catch (err) {
       console.error('Failed to load playlist:', err);
@@ -201,7 +221,7 @@ class DJPanel {
 
   renderPlaylist() {
     if (this.playlist.length === 0) {
-      this.playlistEl.innerHTML = '<div style="padding:20px;text-align:center;color:#666;">播放列表为空</div>';
+      this.playlistEl.innerHTML = `<div style="padding:20px;text-align:center;color:#666;">${I18N.t('dj.playlistEmpty')}</div>`;
       return;
     }
 

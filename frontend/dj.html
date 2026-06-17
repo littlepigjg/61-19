@@ -6,19 +6,23 @@
   <title>内网音频广播 - DJ 控制台</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body data-i18n-page-title="app.title.dj">
   <div class="container">
     <header class="header">
-      <h1>🎛️ DJ 控制台</h1>
+      <h1 data-i18n="header.dj">🎛️ DJ 控制台</h1>
       <nav>
-        <a href="index.html" class="nav-link">播放器</a>
-        <a href="dj.html" class="nav-link active">DJ 控制台</a>
+        <a href="index.html" class="nav-link" data-i18n="nav.player">播放器</a>
+        <a href="dj.html" class="nav-link active" data-i18n="nav.dj">DJ 控制台</a>
+        <div class="lang-switcher">
+          <button class="lang-switcher__btn" data-lang="zh">中文</button>
+          <button class="lang-switcher__btn" data-lang="en">EN</button>
+        </div>
       </nav>
     </header>
 
     <main class="main">
       <section class="channels-section">
-        <h2>选择频道</h2>
+        <h2 data-i18n="channel.select">选择频道</h2>
         <div class="channel-list" id="channelList">
         </div>
       </section>
@@ -26,12 +30,12 @@
       <section class="dj-panel">
         <div class="dj-card">
           <div class="dj-header">
-            <h2 id="djChannelName">选择频道</h2>
-            <span class="status-badge" id="statusBadge">停止</span>
+            <h2 id="djChannelName" data-i18n="channel.select">选择频道</h2>
+            <span class="status-badge" id="statusBadge" data-i18n="channel.stopped">停止</span>
           </div>
 
           <div class="now-playing">
-            <div class="np-label">正在播放</div>
+            <div class="np-label" data-i18n="dj.nowPlaying">正在播放</div>
             <div class="np-title" id="nowPlaying">--</div>
           </div>
 
@@ -42,7 +46,7 @@
           </div>
 
           <div class="volume-section">
-            <label>频道音量</label>
+            <label data-i18n="dj.channelVolume">频道音量</label>
             <div class="volume-control large">
               <span>🔈</span>
               <input type="range" id="channelVolume" min="0" max="100" value="100">
@@ -52,17 +56,17 @@
 
           <div class="stats-row">
             <div class="stat-box">
-              <span class="stat-label">在线收听</span>
+              <span class="stat-label" data-i18n="dj.listenersLabel">在线收听</span>
               <span class="stat-value large" id="djListenerCount">0</span>
             </div>
             <div class="stat-box">
-              <span class="stat-label">播放列表</span>
+              <span class="stat-label" data-i18n="dj.playlistLabel">播放列表</span>
               <span class="stat-value large" id="playlistCount">0</span>
             </div>
           </div>
 
           <div class="playlist-section">
-            <h3>播放列表</h3>
+            <h3 data-i18n="dj.playlistLabel">播放列表</h3>
             <div class="playlist" id="playlist">
             </div>
           </div>
@@ -71,6 +75,7 @@
     </main>
   </div>
 
+  <script src="js/i18n.js"></script>
   <script src="js/config.js"></script>
   <script src="js/dj.js"></script>
 </body>
